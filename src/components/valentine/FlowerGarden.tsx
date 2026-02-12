@@ -57,14 +57,24 @@ function FlowerGarden() {
     audio.volume = 0.9
     audio.currentTime = 0
 
-    const playPromise = audio.play()
-    if (playPromise) {
-      void playPromise.catch(() => {
-        // Some browsers block autoplay until a user gesture.
-      })
+    const playAudio = () => {
+      const playPromise = audio.play()
+      if (playPromise) {
+        void playPromise.catch(() => {
+          // Some browsers block autoplay until a user gesture.
+        })
+      }
+    }
+
+    if (audio.readyState >= 3) {
+      playAudio()
+    } else {
+      audio.addEventListener('canplaythrough', playAudio, { once: true })
+      audio.load()
     }
 
     return () => {
+      audio.removeEventListener('canplaythrough', playAudio)
       audio.pause()
       audio.currentTime = 0
     }
