@@ -1,11 +1,7 @@
-type GreetingMessageProps = {
-  name: string
-}
-
-function GreetingMessage({ name }: GreetingMessageProps) {
+function GreetingMessage() {
   return (
     <section className="message-screen">
-      <h2 className="message">Happy Valentines, {name}!</h2>
+      <h2 className="message">Happy Valentines Baby❤️</h2>
     </section>
   )
 }

@@ -33,7 +33,7 @@ const styleVars = (flower: FlowerConfig): CSSProperties =>
     '--sway': `${flower.sway}s`,
   }) as CSSProperties
 
-function FlowerGarden({ name }: { name: string }) {
+function FlowerGarden() {
   const audioRef = useRef<HTMLAudioElement>(null)
   const idleTimerRef = useRef<number | null>(null)
   const [isMuted, setIsMuted] = useState(false)
@@ -126,7 +126,7 @@ function FlowerGarden({ name }: { name: string }) {
         <span aria-hidden="true">{isMuted ? '🔇' : '🔊'}</span>
       </button>
       <div className="garden-glow" />
-      <p className="garden-title">For you, {name} </p>
+      <p className="garden-title">For you, baby</p>
 
       <div className="sparkle-layer" aria-hidden="true">
         {SPARKLES.map((sparkle) => (

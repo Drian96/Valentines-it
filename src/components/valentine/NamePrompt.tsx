@@ -1,25 +1,24 @@
-import type { FormEvent } from 'react'
-
 type NamePromptProps = {
-  value: string
-  onChange: (value: string) => void
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void
+  title: string
+  gifSrc: string
+  gifAlt: string
+  onYes: () => void
+  onNo: () => void
 }
 
-function NamePrompt({ value, onChange, onSubmit }: NamePromptProps) {
+function NamePrompt({ title, gifSrc, gifAlt, onYes, onNo }: NamePromptProps) {
   return (
     <section className="prompt-card">
-      <h1>Hi what&apos;s your name?</h1>
-      <form className="name-form" onSubmit={onSubmit}>
-        <input
-          className="name-input"
-          type="text"
-          placeholder="Enter your name"
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-        <button type="submit">Confirm</button>
-      </form>
+      <img className="prompt-gif" src={gifSrc} alt={gifAlt} />
+      <h1>{title}</h1>
+      <div className="choice-actions">
+        <button className="choice-button yes-button" type="button" onClick={onYes}>
+          Yes
+        </button>
+        <button className="choice-button no-button" type="button" onClick={onNo}>
+          No
+        </button>
+      </div>
     </section>
   )
 }

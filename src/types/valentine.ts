@@ -1,1 +1,5 @@
-export type ValentinePhase = 'ask-name' | 'show-message' | 'show-flowers'
+export type ValentinePhase =
+  | 'ask-valentine'
+  | 'ask-ready'
+  | 'show-message'
+  | 'show-flowers'
