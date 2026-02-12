@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
+import songFile from '../../assets/song.mp3'
 
 type FlowerConfig = {
   left: number
@@ -32,8 +34,97 @@ const styleVars = (flower: FlowerConfig): CSSProperties =>
   }) as CSSProperties
 
 function FlowerGarden({ name }: { name: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const idleTimerRef = useRef<number | null>(null)
+  const [isMuted, setIsMuted] = useState(false)
+  const [isControlVisible, setIsControlVisible] = useState(true)
+
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) {
+      return
+    }
+
+    audio.muted = isMuted
+  }, [isMuted])
+
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) {
+      return
+    }
+
+    audio.volume = 0.9
+    audio.currentTime = 0
+
+    const playPromise = audio.play()
+    if (playPromise) {
+      void playPromise.catch(() => {
+        // Some browsers block autoplay until a user gesture.
+      })
+    }
+
+    return () => {
+      audio.pause()
+      audio.currentTime = 0
+    }
+  }, [])
+
+  useEffect(() => {
+    const clearIdleTimer = () => {
+      if (idleTimerRef.current !== null) {
+        window.clearTimeout(idleTimerRef.current)
+      }
+    }
+
+    const startIdleTimer = () => {
+      clearIdleTimer()
+      idleTimerRef.current = window.setTimeout(() => {
+        setIsControlVisible(false)
+      }, 3000)
+    }
+
+    const handleUserActivity = () => {
+      setIsControlVisible(true)
+      startIdleTimer()
+    }
+
+    startIdleTimer()
+    window.addEventListener('pointerdown', handleUserActivity)
+
+    return () => {
+      clearIdleTimer()
+      window.removeEventListener('pointerdown', handleUserActivity)
+    }
+  }, [])
+
+  const handleToggleMute = () => {
+    const nextMuted = !isMuted
+    setIsMuted(nextMuted)
+    setIsControlVisible(true)
+
+    const audio = audioRef.current
+    if (!nextMuted && audio) {
+      const playPromise = audio.play()
+      if (playPromise) {
+        void playPromise.catch(() => {
+          // If blocked, user can tap again.
+        })
+      }
+    }
+  }
+
   return (
     <section className="garden">
+      <audio ref={audioRef} src={songFile} preload="auto" />
+      <button
+        className={`audio-toggle ${isControlVisible ? 'is-visible' : 'is-hidden'}`}
+        type="button"
+        onClick={handleToggleMute}
+        aria-label={isMuted ? 'Unmute music' : 'Mute music'}
+      >
+        <span aria-hidden="true">{isMuted ? '🔇' : '🔊'}</span>
+      </button>
       <div className="garden-glow" />
       <p className="garden-title">For you, {name} </p>
 
